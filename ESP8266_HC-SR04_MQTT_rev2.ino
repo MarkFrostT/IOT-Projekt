@@ -11,8 +11,8 @@
 // Opsætning af netværk
 const char* ssid = "ASUSA2_13";
 const char* password = "raspberry";
-//const char* ssid = "Blichersvej 28";
-//const char* password = "bombur8210";
+//const char* ssid = "xxxxx";
+//const char* password = "xxxxx";
 const char* mqtt_server = "Blichersvej28.asuscomm.com";
 
 
