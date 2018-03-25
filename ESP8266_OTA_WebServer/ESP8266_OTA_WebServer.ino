@@ -18,7 +18,7 @@ const char* password = "nokia8210";
 const char* mqtt_server = "Blichersvej28.asuscomm.com";
 
 const int FW_VERSION = 1244;
-const char* fwUrlBase = "http://192.168.43.160/test/";
+const char* fwUrlBase = "http://192.168.43.160/Firmware/";
 
 // Opsætning af client
 WiFiClient espClient2;
