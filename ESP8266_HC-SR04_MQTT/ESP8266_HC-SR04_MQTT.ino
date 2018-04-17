@@ -4,35 +4,30 @@
 
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-#include <DHT.h>
+#include <Ultrasonic.h>
 #include <ArduinoJson.h>
 
 
-#define DHTTYPE DHT11
-#define DHTPIN  5
-
-DHT dht(DHTPIN, DHTTYPE);
-
 // Opsætning af netværk
-//const char* ssid = "ASUSA2_13";
-//const char* password = "raspberry";
-const char* ssid = "xxxxx";
-const char* password = "xxxxx";
-const char* mqtt_server = "Blichersvej28.asuscomm.com";
+const char* ssid = "MarkFrostPi";
+const char* password = "Skoleprojekt";
+const char* mqtt_server = "192.168.5.1";
 
 
 // Opsætning af client
-WiFiClient espClient;
-PubSubClient client(espClient);
+WiFiClient espClient2;
+PubSubClient client(espClient2);
 long lastMsg = 0;
 char msg[50];
 int value = 0;
 
 // Opsætning MQTT
-const char* outTopic = "Device";
-const char* outTopicTest = "Device1";
+const char* outTopic = "Device2int";
+const char* outTopicTest = "Device2";
 const char* inTopic = "Sonoff1in";
 
+// Definer HC-SR04 samt ben nr (Trig,Echo)
+Ultrasonic ultrasonic(4, 5);
 
 // Lav en long til at gemme tiden
 unsigned long next_refresh = 0;
@@ -71,7 +66,7 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("ESP8266Client")) {
+    if (client.connect("ESP8266Client222")) {
       Serial.println("connected");
 
       
@@ -96,7 +91,7 @@ void setup() {
   setup_wifi();                   // Connect to wifi 
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
-  dht.begin();
+
 }
 
 void loop() {
@@ -110,10 +105,10 @@ void loop() {
   String Payload;
   StaticJsonBuffer<200> jsonBuffer;
   JsonObject& JsonData = jsonBuffer.createObject();
-  JsonData["Device"] = "Device1";
-  JsonData["Type"] = "Temperatur";
-  JsonData["Units"] = "C";
-  JsonData["Data"] = dht.readTemperature();
+  JsonData["Device"] = "Device2";
+  JsonData["Type"] = "Afstand";
+  JsonData["Units"] = "cm";
+  JsonData["Data"] = ultrasonic.distanceRead();
   JsonData.printTo(Payload);
   Serial.println();
   JsonData.prettyPrintTo(Serial);

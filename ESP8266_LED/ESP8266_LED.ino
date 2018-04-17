@@ -1,4 +1,4 @@
-// Adafruit_NeoMatrix example for tiled NeoPixel matrices.  Scrolls
+8210// Adafruit_NeoMatrix example for tiled NeoPixel matrices.  Scrolls
 // 'Howdy' across three 10x8 NeoPixel grids that were created using
 // NeoPixel 60 LEDs per meter flex strip.
 #include <ESP8266WiFi.h>
@@ -14,12 +14,12 @@
 
 // Update these with values suitable for your network.
 
-const char* ssid = "xxxxxxxxxx";
-const char* password = "xxxxxxxxxxxx";
-const char* mqtt_server = "Blichersvej28.asuscomm.com";
-const char* clientID = "Device10";
-const char* outTopic = "Device10Out";
-const char* inTopic = "Device10In";
+const char* ssid = "MarkFrostpi";
+const char* password = "Skoleprojekt";
+const char* mqtt_server = "192.168.5.1";
+const char* clientID = "Device5int";
+const char* outTopic = "Device5";
+const char* inTopic = "Device5In";
 
 // MATRIX DECLARATION:
 // Parameter 1 = width of EACH NEOPIXEL MATRIX (not total display)
@@ -153,7 +153,7 @@ void loop() {
   matrix.print(OutString);
   int Value = OutString.length();
   Value = Value * -1 ;
-  Serial.println(x);
+  //Serial.println(x);
   if(--x < (-20+Value*6)) {
     x = matrix.width();
     

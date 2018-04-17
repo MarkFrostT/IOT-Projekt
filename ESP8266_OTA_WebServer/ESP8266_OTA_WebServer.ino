@@ -11,14 +11,12 @@
 
 
 // Opsætning af netværk
-//const char* ssid = "ASUSA2_13";
-//const char* password = "raspberry";
-const char* ssid = "OnePlus 5T";
-const char* password = "nokia8210";
-const char* mqtt_server = "Blichersvej28.asuscomm.com";
+const char* ssid = "MarkFrostPi";
+const char* password = "Skoleprojekt";
+const char* mqtt_server = "192.168.5.1";
 
 const int FW_VERSION = 1244;
-const char* fwUrlBase = "http://192.168.43.160/Firmware/";
+const char* fwUrlBase = "http://192.168.5.1/Firmware/";
 
 // Opsætning af client
 WiFiClient espClient2;
@@ -28,8 +26,8 @@ char msg[50];
 int value = 0;
 
 // Opsætning MQTT
-const char* outTopic = "Device";
-const char* outTopicTest = "Device2";
+const char* outTopic = "Device3int";
+const char* outTopicTest = "Device3";
 const char* inTopic = "Sonoff1in";
 
 // Definer HC-SR04 samt ben nr (Trig,Echo)
