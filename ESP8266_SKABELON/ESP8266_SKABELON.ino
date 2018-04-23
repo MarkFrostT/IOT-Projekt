@@ -13,33 +13,51 @@
 // Opsætning af netværk
 const char* ssid = "MarkFrostPi";
 const char* password = "Skoleprojekt";
+// Opsætning af MQTT Broker
 const char* mqtt_server = "192.168.5.1";
+const int mqtt_port = 1883;
 
-const int FW_VERSION = 1244;
+// OTA fra HTTP Server
+const int FW_VERSION = 3;
 const char* fwUrlBase = "http://192.168.5.1/Firmware/";
 
-// Opsætning af client
+// Opsætning af Wifi client
 WiFiClient espClient3;
+// Opsætning af MQTT client
 PubSubClient client(espClient3);
-long lastMsg = 0;
-char msg[50];
-int value = 0;
-
-// Opsætning MQTT
-const char* outTopic = "Device3out";
-const char* outTopicTest = "Device3Alive";
-const char* inTopic = "Device3in";
-
+// Opsætning Http client
+HTTPClient httpClient;
 // Definer HC-SR04 samt ben nr (Trig,Echo)
-Ultrasonic ultrasonic(4, 5);
+Ultrasonic ultrasonic(16, 5);
 
+// Global Variable
 // Lav en long til at gemme tiden
 unsigned long next_refresh = 0;
+// Mqtt CallBack
+String message;
+// JSON Data 
+String Device = "Device3";
+String Type;
+String Unit;
+String Data;
 
+// Output
+const int ledPin = 4 ;
+int ledState = LOW;  
+
+
+
+
+// Opsætning MQTT Topics
+const char* outTopic = "Device3out";
+const char* outTopicAlive = "Device3Alive";
+const char* inTopic = "Device3in";
+
+// Connecting to a WiFi network
 void setup_wifi() {
 
-  delay(1000);
-  // We start by connecting to a WiFi network
+  delay(3000);
+  
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
@@ -55,12 +73,22 @@ void setup_wifi() {
 
 // Se om der er MQTT besked 
 void callback(char* topic, byte* payload, unsigned int length) {
+  // Conver the incoming byte array to a string
+  payload[length] = '\0'; // Null terminator used to terminate the char array
+  message = (char*)payload;
+  
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
+  // Output Code
+  if (message == "1") {
+      ledState = HIGH;
+      Serial.print("Led high");
+  } else {
+      ledState = LOW;
+      Serial.print("Led low");
   }
+  digitalWrite(ledPin, ledState);
   Serial.println();
 }
 
@@ -70,12 +98,12 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("ESP8266Client222")) {
+    if (client.connect("ESP8266Client3")) {
       Serial.println("connected");
 
       
       // Once connected, publish an announcement...
-      client.publish(outTopic, "{\"Device1\":\"CONNECTED\"}");
+      client.publish(outTopicAlive, "{\"Device3\":\"CONNECTED\"}");
       // ... and resubscribe
       client.subscribe(inTopic);
     } else {
@@ -83,17 +111,20 @@ void reconnect() {
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");
       // Wait 5 seconds before retrying
-      for(int i = 0; i<5000; i++){
-      delay(1);
-      }
+      //for(int i = 0; i<5000; i++){
+      delay(5000);
+      //}
     }
   }
 }
 
-void setup() {
+void setup() { 
+  // Disable AP Mode 
+  WiFi.mode(WIFI_STA);
+  pinMode(ledPin, OUTPUT);
   Serial.begin(115200);
   setup_wifi();                   // Connect to wifi 
-  client.setServer(mqtt_server, 1883);
+  client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callback);
 
 }
@@ -106,22 +137,43 @@ void loop() {
   client.loop();
   if( (long)(millis() - next_refresh) >= 0)
   {
-  String Payload;
-  StaticJsonBuffer<200> jsonBuffer;
-  JsonObject& JsonData = jsonBuffer.createObject();
-  JsonData["Device"] = "Device2";
-  JsonData["Type"] = "Afstand";
-  JsonData["Units"] = "cm";
-  JsonData["Data"] = ultrasonic.distanceRead();
-  JsonData.printTo(Payload);
-  Serial.println();
-  JsonData.prettyPrintTo(Serial);
-  client.publish(outTopicTest, (char*) Payload.c_str());
+  Create_Data_Packet();
+  Publish_Output(Device,Type,Unit,Data);
   checkForUpdates();
   next_refresh = millis() + 10000;
   }
   
 }
+
+// Indsæt Sensor data 
+void Create_Data_Packet () {
+   Type = "Ultralydsmåler";
+   Unit = "mm";
+   Data = (String)ultrasonic.distanceRead();
+  
+}
+
+void Publish_Output(String device ,String type ,String unit,String data ) {
+  String Payload;
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& JsonData = jsonBuffer.createObject();
+  JsonData["Device"] = device;
+  JsonData["Type"] = type;
+  JsonData["Units"] = unit;
+  JsonData["Data"] = data;
+  JsonData.printTo(Payload);
+  client.publish(outTopic, (char*) Payload.c_str());
+}
+/*
+JSON TELEGRAM
+{
+"Device" : "Device3",
+"Type" : "Afstand",
+"Units" : "mm",
+"Data" : 678
+}
+*/
+
 void checkForUpdates() {
   String mac = getMAC();
   String fwURL = String( fwUrlBase );
@@ -135,15 +187,14 @@ void checkForUpdates() {
   Serial.print( "Firmware version URL: " );
   Serial.println( fwVersionURL );
 
-  HTTPClient httpClient;
   httpClient.begin( fwVersionURL );
   int httpCode = httpClient.GET();
   if( httpCode == 200 ) {
     String newFWVersion = httpClient.getString();
 
-    Serial.print( "Current firmware version3 " );
+    Serial.print( "Current firmware version " );
     Serial.println( FW_VERSION );
-    Serial.print( "Available firmware version3: " );
+    Serial.print( "Available firmware version: " );
     Serial.println( newFWVersion );
 
     int newVersion = newFWVersion.toInt();
@@ -185,5 +236,6 @@ String getMAC()
 
   return String( result );
 }
+
 
 

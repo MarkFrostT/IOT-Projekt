@@ -1,0 +1,1 @@
+For at lave bin fil fra Arduino Ctrl+Alt+S Rename til Mac Adresse 
