@@ -3,13 +3,13 @@ void reconnect() {
   // Loop until we're reconnected
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
-    // Attempt to connect
-    if (client.connect("ESP8266Client4")) {
+    // Attempt to connect // ###
+    if (client.connect("ESP8266Client3")) {  
       Serial.println("connected");
 
       
       // Once connected, publish an announcement...
-      client.publish(outTopicAlive, "{\"Device4\":\"CONNECTED\"}");
+      client.publish(outTopicAlive, "{\"Device3\":\"CONNECTED\"}"); // ###
       // ... and resubscribe
       client.subscribe(inTopic);
     } else {

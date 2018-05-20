@@ -7,6 +7,7 @@ void Matrix() {
   matrix.setCursor(x, 0);
   String OutString = message;
   matrix.print(OutString);
+  Serial.println("Matrix print "+OutString);
   int Value = OutString.length();
   Value = Value * -1 ;
   //Serial.println(x);

@@ -1,9 +1,9 @@
 
 // Indsæt Sensor data 
 void Create_Data_Packet () {
-   Type = "Ultralydsmaaler";
-   Unit = "cm";
-   Data = (String)ultrasonic.distanceRead();
+   Type = "Ultralydsmåler";
+   Unit = "mm";
+   Data = "";
   
 }
 

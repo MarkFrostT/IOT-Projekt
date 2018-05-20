@@ -3,7 +3,7 @@
 void checkForUpdates() {
   String mac = getMAC();
   String fwURL = String( fwUrlBase );
-  fwURL.concat( "Device4" );
+  fwURL.concat( mac );
   String fwVersionURL = fwURL;
   fwVersionURL.concat( ".version" );
 

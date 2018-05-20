@@ -3,7 +3,7 @@
 void Create_Data_Packet () {
    Type = "Ultralydsmåler";
    Unit = "mm";
-   Data = (String)ultrasonic.distanceRead();
+   Data = "";
   
 }
 

@@ -18,26 +18,25 @@ const char* mqtt_server = "192.168.5.1";
 const int mqtt_port = 1883;
 
 // OTA fra HTTP Server
-const int FW_VERSION = 4;
+const int FW_VERSION = 3;
 const char* fwUrlBase = "http://192.168.5.1/Firmware/";
 
 // Opsætning af Wifi client
-WiFiClient espClient4; // ###
+WiFiClient espClient3; // ###
 // Opsætning af MQTT client
-PubSubClient client(espClient4); // ###
+PubSubClient client(espClient3); // ###
 // Opsætning Http client
 HTTPClient httpClient;
 
-// Definer HC-SR04 samt ben nr (Trig,Echo) 
-Ultrasonic ultrasonic(4, 5); 
+
 // Output
-const int ledPin = 14 ;
-int ledState = LOW;  
+const int ledPin = 5 ; // ###
+int ledState = LOW;    // ###
 
 // Opsætning MQTT Topics
-const char* outTopic = "Device4out";
-const char* outTopicAlive = "Device4Alive";
-const char* inTopic = "Device4in";
+const char* outTopic = "Device3out"; // ###
+const char* outTopicAlive = "Device3Alive";// ###
+const char* inTopic = "Device3in";// ###
 
 
 // Global Variable
@@ -46,7 +45,7 @@ unsigned long next_refresh = 0;
 // Mqtt CallBack
 String message;
 // JSON Data 
-String Device = "Device4";
+String Device = "Device3"; // ###
 String Type;
 String Unit;
 String Data;
@@ -54,7 +53,7 @@ String Data;
 void setup() { 
   // Disable AP Mode 
   WiFi.mode(WIFI_STA);
-  pinMode(ledPin, OUTPUT);
+  pinMode(ledPin, OUTPUT); // ###
   Serial.begin(115200);
   setup_wifi();                   // Connect to wifi 
   client.setServer(mqtt_server, mqtt_port);
@@ -70,8 +69,8 @@ void loop() {
   client.loop();
   if( (long)(millis() - next_refresh) >= 0)
   {
-  Create_Data_Packet();
-  Publish_Output(Device,Type,Unit,Data);
+  //Create_Data_Packet(); // ###
+  //Publish_Output(Device,Type,Unit,Data); // ###
   checkForUpdates();
   next_refresh = millis() + 10000;
   }

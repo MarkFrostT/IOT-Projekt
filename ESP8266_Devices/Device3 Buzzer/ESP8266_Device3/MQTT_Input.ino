@@ -6,6 +6,15 @@ void callback(char* topic, byte* payload, unsigned int length) {
   
   Serial.print("Message arrived [");
   Serial.print(topic);
-  Serial.print(message);
+  Serial.print("] ");
   // Output Code
+  if (message == "1") {
+      ledState = HIGH;
+      Serial.print("Led high");
+  } else {
+      ledState = LOW;
+      Serial.print("Led low");
+  }
+  digitalWrite(ledPin, ledState);
+  Serial.println();
 }
